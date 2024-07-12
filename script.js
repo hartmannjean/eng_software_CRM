@@ -85,7 +85,7 @@ const fetchData = async () => {
     });
 };
 
-function searchByBirthDate() {
+const searchByBirthDate = () => {
   const birthDate = document.getElementById("birthDate").value;
   fetch(`${API_URL}?DataNascimento=eq.${birthDate}&select=*`, {
     method: "GET",
@@ -98,7 +98,7 @@ function searchByBirthDate() {
     .catch((error) => {
       console.error("Erro ao buscar dados:", error);
     });
-}
+};
 
 const addPerson = async () => {
   const person = {
@@ -126,14 +126,14 @@ const addPerson = async () => {
         if (!response.ok) {
           throw new Error("Erro ao adicionar pessoa");
         }
-        return response; // Converte a resposta para JSON
+        return response;
       })
       .then((data) => {
-        fetchData(); // Atualiza a tabela após adicionar
+        fetchData();
         alert("Cliente cadastrado com sucesso!");
       })
       .catch((error) => {
-        console.error("Erro ao adicionar pessoa:", error);
+        alert("Ocorreu um erro ao cadastrar o cliente.");
       });
   } else {
     await fetch(`${API_URL}?id=eq.${id}`, {
@@ -149,14 +149,14 @@ const addPerson = async () => {
         if (!response.ok) {
           throw new Error("Erro ao atualizar pessoa");
         }
-        return response; // Converte a resposta para JSON
+        return response;
       })
       .then((data) => {
-        fetchData(); // Atualiza a tabela após atualizar
+        fetchData();
         alert("Cliente atualizado com sucesso!");
       })
       .catch((error) => {
-        console.error("Erro ao atualizar pessoa:", error);
+        alert("Ocorreu um erro ao atualizar o cliente.");
       });
   }
   changeScreen("home");
@@ -169,11 +169,10 @@ const deletePerson = async (personId) => {
       headers: AUTH_HEADER,
     })
       .then((response) => {
-        console.log(response);
         if (!response.ok) {
           throw new Error("Erro ao excluir pessoa");
         }
-        fetchData(); // Atualiza a tabela após excluir
+        fetchData();
       })
       .catch((error) => {
         console.error("Erro ao excluir pessoa:", error);
@@ -189,99 +188,60 @@ const fetchAddress = async () => {
     })
       .then((response) => response.json())
       .catch(function (error) {
-        console.log(
-          "There has been a problem with your fetch operation: " + error.message
-        );
+        alert("CPF não encontrado!");
       });
 
-    document.getElementById("addLogradouro").value = response.logradouro;
-    document.getElementById("addBairro").value = response.bairro;
-    document.getElementById("addCidade").value = response.localidade;
+    if (!response.erro) {
+      document.getElementById("addLogradouro").value = response.logradouro;
+      document.getElementById("addBairro").value = response.bairro;
+      document.getElementById("addCidade").value = response.localidade;
+      document.getElementById("addUF").value = response.uf;
+    }
   }
 };
 
-function populateTable(data) {
-  const tableBody = document.querySelector("#dataTable tbody");
+const populateTable = (data) => {
+  const tableBody = document.getElementById("tableBody");
   tableBody.innerHTML = "";
 
   data.forEach((person) => {
-    const row = document.createElement("tr");
+    const row = document.createElement("div");
     row.innerHTML = `
-            <td class="clickable">${person.NomeCompleto}</td>
-            <td>${person.Email}</td>
-            <td>${person.DataNascimento}</td>
-            <td>${person.Logradouro}, ${person.Numero} - ${person.Cidade}</td>
+            <h3 class="clickable">${person.NomeCompleto}</h3>
+            <h3>${person.Email}</h3>
+            <h3>${person.DataNascimento}</h3>
+            <h3>${person.Logradouro}, ${person.Numero} - ${person.Cidade}</h3>
         `;
 
-    // Criar botão "Enviar E-mail" e adicioná-lo à célula correspondente (última célula)
     const emailButton = document.createElement("button");
     emailButton.textContent = "Enviar E-mail";
     emailButton.addEventListener("click", () =>
-      enviarEmailStatusProducao(person.NomeCompleto, person.Email)
+      sendEmailProductionStatus(person.NomeCompleto, person.Email)
     );
-    const emailCell = document.createElement("td");
+    const emailCell = document.createElement("div");
     emailCell.appendChild(emailButton);
-    row.appendChild(emailCell);
 
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
+    const deleteButton = document.createElement("a");
+    deleteButton.innerHTML =
+      "<img src='https://static-00.iconduck.com/assets.00/x-circle-close-delete-icon-256x256-l64id5on.png' alt=''>";
     deleteButton.addEventListener("click", () => deletePerson(person.id));
-    const deleteCell = document.createElement("td");
-    deleteCell.appendChild(deleteButton);
-    row.appendChild(deleteCell);
 
-    const updateButton = document.createElement("button");
-    updateButton.textContent = "Update";
+    const updateButton = document.createElement("a");
+    updateButton.innerHTML =
+      "<img src='https://cdn.iconscout.com/icon/free/png-256/free-edit-3352303-2791239.png' alt=''>";
     updateButton.addEventListener("click", () => {
       id = person.id;
       defineOperation("update");
     });
-    const updateCell = document.createElement("td");
-    updateCell.appendChild(updateButton);
-    row.appendChild(updateCell);
 
+    emailCell.appendChild(updateButton);
+    emailCell.appendChild(deleteButton);
+    row.appendChild(emailCell);
     tableBody.appendChild(row);
   });
-}
+};
 
-function fillForm(person) {
-  document.getElementById("updateId").value = person.id;
-  document.getElementById("updateName").value = person.NomeCompleto;
-  document.getElementById("updateEmail").value = person.Email;
-  document.getElementById("updateBirthDate").value = person.DataNascimento;
-  document.getElementById("updateLogradouro").value = person.Logradouro;
-  document.getElementById("updateNumero").value = person.Numero;
-  document.getElementById("updateComplemento").value = person.Complemento;
-  document.getElementById("updateBairro").value = person.Bairro;
-  document.getElementById("updateCidade").value = person.Cidade;
-  document.getElementById("updateCEP").value = person.CEP;
-
-  // Remove qualquer botão de "Enviar E-mail" anteriormente adicionado
-  const emailButtonCell = document.getElementById("emailButtonCell");
-  if (emailButtonCell) {
-    emailButtonCell.innerHTML = "";
-  }
-
-  // Cria e adiciona o botão "Enviar E-mail" na célula correspondente
-  const emailButton = document.createElement("button");
-  emailButton.textContent = "Enviar E-mail";
-  emailButton.addEventListener("click", () => enviarEmail(person.Email));
-
-  // Encontra a célula onde o botão deve ser adicionado
-  const tableRows = document.querySelectorAll("#dataTable tbody tr");
-  for (let i = 0; i < tableRows.length; i++) {
-    const cells = tableRows[i].querySelectorAll("td");
-    const emailCell = cells[1]; // Considerando que o e-mail está na segunda coluna da tabela
-    if (emailCell.textContent === person.Email) {
-      emailButtonCell = cells[8]; // Ajuste conforme a posição correta da célula de e-mail na tabela
-      emailButtonCell.appendChild(emailButton);
-      break;
-    }
-  }
-}
-
-function enviarEmailStatusProducao(nomeCliente, email) {
-  console.log(nomeCliente);
+const sendEmailProductionStatus = (nomeCliente, email) => {
   fetch(
     `https://yawodnvmejpiormfvflv.supabase.co/rest/v1/Producao?NomeCliente=eq.${nomeCliente}&select=*`,
     {
@@ -291,7 +251,6 @@ function enviarEmailStatusProducao(nomeCliente, email) {
   )
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
       if (data.length > 0) {
         const producao = data[0];
 
@@ -299,9 +258,9 @@ function enviarEmailStatusProducao(nomeCliente, email) {
           producao.QuantidadeTotal - producao.QuantidadeProduzida;
         const templateParams = {
           NomeCliente: producao.NomeCliente,
-          DataHoraEtapaAtual: formatarDataHora(
+          DataHoraEtapaAtual: formateDate(
             new Date(producao.DataHoraEtapaAtual)
-          ), // Adicionando a data e hora atuais
+          ),
           ProdutoProduzido: producao.ProdutoProduzido,
           EtapaAtualProducao: producao.EtapaAtualProducao,
           QuantidadeProduzida: producao.QuantidadeProduzida,
@@ -310,8 +269,7 @@ function enviarEmailStatusProducao(nomeCliente, email) {
           destinatario_email: email,
         };
 
-        // Chamar a função para enviar o e-mail
-        enviarEmail(templateParams);
+        sendEmail(templateParams);
       } else {
         console.error(
           "Nenhuma produção encontrada para o cliente:",
@@ -322,9 +280,9 @@ function enviarEmailStatusProducao(nomeCliente, email) {
     .catch((error) => {
       console.error("Erro ao buscar dados de produção:", error);
     });
-}
+};
 
-function enviarEmail(templateParams) {
+const sendEmail = (templateParams) => {
   emailjs
     .send(
       "service_hied2cd",
@@ -334,16 +292,15 @@ function enviarEmail(templateParams) {
     )
     .then(
       function (response) {
-        console.log("E-mail enviado com sucesso!", response);
-        // Lógica adicional após o envio
+        alert("Email enviado com sucesso!");
       },
       function (error) {
-        console.error("Erro ao enviar e-mail:", error);
+        alert("Ocorreu um erro ao enviar o email, tente novamente mais tarde.");
       }
     );
-}
+};
 
-function formatarDataHora(date) {
+const formateDate = (date) => {
   const dia = String(date.getDate()).padStart(2, "0");
   const mes = String(date.getMonth() + 1).padStart(2, "0");
   const ano = date.getFullYear();
@@ -352,7 +309,7 @@ function formatarDataHora(date) {
   const segundos = String(date.getSeconds()).padStart(2, "0");
 
   return `${dia}/${mes}/${ano} ${horas}:${minutos}:${segundos}`;
-}
+};
 
 changeScreen("home");
-fetchData(); // Carrega os dados iniciais ao abrir a página
+fetchData();

@@ -17,55 +17,76 @@
         <section id="operation">
             <div id="operationDiv">
                 <button onClick="changeScreen('home')">Voltar</button>
-
                 <div id="operationFields">
-                    <label for="addName">Nome</label>
-                    <input type="text" id="addName" placeholder="Nome Completo">
-                    <label for="addEmail">Email</label>
-                    <input type="text" id="addEmail" placeholder="Email">
-                    <label for="addBirthDate">Data de Nascimento</label>
-                    <input type="date" id="addBirthDate" placeholder="Data de Nascimento">
-                    <hr>
-                    <label for="addCEP">CEP</label>
-                    <input type="text" id="addCEP" placeholder="CEP" onkeyup="fetchAddress()">
-                    <label for="addLogradouro">Logradouro</label>
-                    <input type="text" id="addLogradouro" placeholder="Logradouro">
-                    <label for="addNumero">Número</label>
-                    <input type="text" id="addNumero" placeholder="Número">
-                    <label for="addComplemento">Complemento</label>
-                    <input type="text" id="addComplemento" placeholder="Complemento">
-                    <label for="addBairro">Bairro</label>
-                    <input type="text" id="addBairro" placeholder="Bairro">
-                    <label for="addCidade">Cidade</label>
-                    <input type="text" id="addCidade" placeholder="Cidade">
-                </div>
+                    <div class="personalData">
+                        <div>
+                            <label for="addName">Nome</label>
+                            <input type="text" id="addName" placeholder="Nome Completo">
+                        </div>
+                        <div>
+                            <label for="addEmail">Email</label>
+                            <input type="text" id="addEmail" placeholder="Email">
+                        </div>
+                        <div>
+                            <label for="addBirthDate">Data de Nascimento</label>
+                            <input type="date" id="addBirthDate" placeholder="Data de Nascimento">
+                        </div>
+                    </div>
 
+                    <div class="addressData">
+                        <div class="linha">
+                            <label for="addCEP">CEP</label>
+                            <input type="text" id="addCEP" placeholder="CEP" onkeyup="fetchAddress()">
+                        </div>
+                        <div class="linha">
+                            <div>
+                                <label for="addUF">Estado</label>
+                                <input type="text" id="addUF" placeholder="Estado">
+                            </div>
+                            <div>
+                                <label for="addCidade">Cidade</label>
+                                <input type="text" id="addCidade" placeholder="Cidade">
+                            </div>
+                            <div>
+                                <label for="addBairro">Bairro</label>
+                                <input type="text" id="addBairro" placeholder="Bairro">
+                            </div>
+                        </div>
+                        <div class="linha">
+                            <div>
+                                <label for="addLogradouro">Logradouro</label>
+                                <input type="text" id="addLogradouro" placeholder="Logradouro">
+                            </div>
+                            <div>
+                                <label for="addNumero">Número</label>
+                                <input type="text" id="addNumero" placeholder="Número">
+                            </div>
+                            <div>
+                                <label for="addComplemento">Complemento</label>
+                                <input type="text" id="addComplemento" placeholder="Complemento">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <button id="executeBtn" onClick="addPerson()">Salvar</button>
             </div>
         </section>
 
         <section id="home">
             <div class="buttons">
+                <h2>Clientes cadastrados</h2>
                 <button id="btnNewClient" onClick="defineOperation('create')">Cadastrar cliente</button>
-                <h2>Clientes cadastrados:</h2>
             </div>
-            <div class="table-container">
-                <table id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>Nome Completo</th>
-                            <th>Email</th>
-                            <th>Data de Nascimento</th>
-                            <th>Endereço</th>
-                            <th>Ações</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Dados da tabela preenchidos dinamicamente -->
-                    </tbody>
-                </table>
+            <div id="dataTable">
+                <div class="tableHead">
+                    <h3>Cliente</h3>
+                    <h3>Email</h3>
+                    <h3>Nascimento</h3>
+                    <h3>Endereço</h3>
+                </div>
+                <div class="tableBody" id="tableBody">
+                    <!-- Dados da tabela preenchidos dinamicamente -->
+                </div>
             </div>
         </section>
 
