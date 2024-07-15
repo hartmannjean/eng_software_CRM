@@ -19,6 +19,14 @@ Cadastro de pessoas (CRUD);
 Envio de e-mail via API;
 Consulta de endereço por CEP.
 
+Como usar:
+
+Baixe os arquivos em uma pasta e execute o index.html no navegador.
+
+ex.: C:\crm\index.html
+
+
+
 Quem fez:
 
 Jean Patrick Hartmann
